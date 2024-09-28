@@ -7,6 +7,7 @@ package ui.game;
 import java.awt.Color;
 import javax.swing.JButton;
 import game.quince.Quince;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -29,11 +30,13 @@ public class QuinceUI extends javax.swing.JFrame {
         juego = new Quince(menu);
         
         setTitle("Quince");
-        //setSize(400, 300);
+        setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+        setLayout(new GridLayout(5, 3));  // Cambiar a un GridLayout para botones
+
         // Agregar botón para regresar al menú
         JButton btnMenu = new JButton("Regresar al Menu");
+        btnMenu.setBounds(200, 100, 40, 40);
         btnMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,6 +45,7 @@ public class QuinceUI extends javax.swing.JFrame {
             }
         });
         
+        // Agregar el botón de regresar al menú
         add(btnMenu);
     }
 
@@ -77,8 +81,6 @@ public class QuinceUI extends javax.swing.JFrame {
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jButton2.setText("2");
-        jButton2.setMaximumSize(new java.awt.Dimension(38, 38));
-        jButton2.setMinimumSize(new java.awt.Dimension(38, 38));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -149,7 +151,7 @@ public class QuinceUI extends javax.swing.JFrame {
                 .addGap(47, 47, 47)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
