@@ -1,91 +1,119 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package game.quince;
 
-import game.computer.Computadora;
-import java.awt.Color;
+import game.computer.Computer;
 import java.util.ArrayList;
-import javax.swing.JButton;
+import java.util.List;
+import javax.swing.JOptionPane;
+import ui.menu.Menu;
+
 
 public class Quince {
-    
-    public ArrayList<Integer> cartasJugador = new ArrayList<>();
-    public ArrayList<Integer> cartasComputer = new ArrayList<>();
-    public boolean turno;
-    public Computadora computadora;
-    
-    public Quince() {
-        computadora = new Computadora(cartasJugador, cartasComputer);
-        turno = determinarQuienEmpieza();
+    private List<Integer> numerosJugador;
+    private List<Integer> numerosComputadora;
+    private Computer computadora;
+    private Menu menu;
+
+    public Quince(Menu menu) {
+        this.numerosJugador = new ArrayList<>();
+        this.numerosComputadora = new ArrayList<>();
+        this.computadora = new Computer();
+        this.menu = menu;  // Referencia al menú
     }
-    
-    public void secuenceGame(int carta, JButton[] botonesUI) {
-        // Jugador selecciona carta
-        cartasJugador.add(carta);
-        actualizarBotonUI(carta, botonesUI, "player");
-        turno = true;
-        
-        // Verificar si el jugador ganó o alcanzó 15
-        if (sumaCartas(cartasJugador) >= 15 || cartasJugador.size() == 3) {
-            verificarGanador();
+
+    // Método para procesar el número seleccionado por el jugador
+    public void seleccionarNumeroJugador(int numero) {
+        // Verificar si el número ya ha sido seleccionado
+        if (numerosJugador.contains(numero) || numerosComputadora.contains(numero)) {
+            System.out.println("El número " + numero + " ya ha sido seleccionado.");
             return;
         }
 
-        // Turno de la computadora
-        int cartaComputadora = computadora.jugadasComputadora(turno);
-        cartasComputer.add(cartaComputadora);
-        actualizarBotonUI(cartaComputadora, botonesUI, "computer");
+        // Registrar jugada del jugador
+        registrarJugadaJugador(numero);
 
-        // Verificar si la computadora ganó o alcanzó 15
-        if (sumaCartas(cartasComputer) >= 15 || cartasComputer.size() == 3) {
-            verificarGanador();
+        // Verificar si el jugador ha ganado
+        if (verificarGanador(numerosJugador)) {
+            JOptionPane.showMessageDialog(null, "¡El Jugador Gana!");
+            menu.actualizarEstadisticas(1);  // Actualizar estadísticas del jugador
+            reiniciarJuego();  // Reiniciar juego
+        } else if (numerosJugador.size() + numerosComputadora.size() < 9) {
+            // Turno de la computadora
+            seleccionarNumeroComputadora();
+        } else {
+            // Empate
+            JOptionPane.showMessageDialog(null, "¡Empate!");
+            menu.actualizarEstadisticas(0);  // Actualizar estadísticas de empate
+            reiniciarJuego();
         }
     }
 
-    // Determinar aleatoriamente quién empieza
-    public boolean determinarQuienEmpieza() {
-        // Aquí puedes usar un JOptionPane para informar al usuario
-        int quienEmpieza = (Math.random() < 0.5) ? 0 : 1;
-        return quienEmpieza == 1;
+    // Método para que la computadora seleccione un número
+    private void seleccionarNumeroComputadora() {
+        // Computadora elige un número estratégico
+        int numeroSeleccionado = computadora.jugar(numerosJugador, numerosComputadora);
+        numerosComputadora.add(numeroSeleccionado);
+        System.out.println("Computadora eligió: " + numeroSeleccionado);
+
+        // Verificar si la computadora ha ganado
+        if (verificarGanador(numerosComputadora)) {
+            JOptionPane.showMessageDialog(null, "¡La Computadora ha ganado!");
+            menu.actualizarEstadisticas(2);  // Actualizar estadísticas de la computadora
+            reiniciarJuego();  // Reiniciar juego
+        } else if (numerosJugador.size() + numerosComputadora.size() == 9) {
+            // Empate
+            JOptionPane.showMessageDialog(null, "¡Empate!");
+            menu.actualizarEstadisticas(0);  // Actualizar estadísticas de empate
+            reiniciarJuego();
+        }
     }
 
-    public void verificarGanador() {
-        int sumaJugador = sumaCartas(cartasJugador);
-        int sumaComputadora = sumaCartas(cartasComputer);
-        
-        if (sumaJugador == 15) {
-            // Aquí podrías mostrar un JOptionPane diciendo que el jugador ganó
-            System.out.println("¡Jugador gana!");
-        } else if (sumaComputadora == 15) {
-            // Aquí podrías mostrar un JOptionPane diciendo que la computadora ganó
-            System.out.println("¡Computadora gana!");
-        } else if (cartasJugador.size() == 3 && cartasComputer.size() == 3) {
-            // Si ambos tienen 3 cartas, decidir quién ganó
-            if (sumaJugador > sumaComputadora) {
-                System.out.println("¡Jugador gana!");
-            } else if (sumaComputadora > sumaJugador) {
-                System.out.println("¡Computadora gana!");
-            } else {
-                System.out.println("Empate!");
+    // Verificar si un jugador tiene una combinación ganadora
+    private boolean verificarGanador(List<Integer> numeros) {
+        int[][] combinacionesGanadoras = {
+            {4, 9, 2}, {3, 5, 7}, {8, 1, 6},
+            {4, 3, 8}, {9, 5, 1}, {2, 7, 6},
+            {4, 5, 6}, {2, 5, 8}
+        };
+
+        for (int[] combinacion : combinacionesGanadoras) {
+            if (numeros.contains(combinacion[0]) &&
+                numeros.contains(combinacion[1]) &&
+                numeros.contains(combinacion[2])) {
+                return true;
             }
         }
+        return false;
     }
 
-    public int sumaCartas(ArrayList<Integer> cartas) {
-        int suma = 0;
-        for (int carta : cartas) {
-            suma += carta;
-        }
-        return suma;
+    // Registrar jugada del jugador y reflejar en Computer
+    private void registrarJugadaJugador(int numeroJugador) {
+        // Agregar el número a la lista de jugadas del jugador
+        numerosJugador.add(numeroJugador);
+
+        // Registrar la jugada en la clase Computer para eliminarla de los números disponibles
+        computadora.registrarJugadaJugador(numeroJugador);
+
+        // Mostrar en consola la elección del jugador
+        System.out.println("Jugador eligió: " + numeroJugador);
     }
 
-    // Método para actualizar la interfaz de usuario
-    public void actualizarBotonUI(int valorCarta, JButton[] botonesUI, String jugador) {
-        for (JButton boton : botonesUI) {
-            if (Integer.parseInt(boton.getText()) == valorCarta) {
-                boton.setEnabled(false);
-                boton.setBackground(jugador.equals("player") ? Color.RED : Color.GREEN);
-                boton.setOpaque(true);
-                break;
-            }
-        }
+    // Reiniciar los valores del juego
+    public void reiniciarJuego() {
+        numerosJugador.clear();
+        numerosComputadora.clear();
     }
+
+    // Obtener los números del jugador y computadora para actualizar UI
+    public List<Integer> getNumerosJugador() {
+        return numerosJugador;
+    }
+
+    public List<Integer> getNumerosComputadora() {
+        return numerosComputadora;
+    }
+
 }

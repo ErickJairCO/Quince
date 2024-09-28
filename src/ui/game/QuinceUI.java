@@ -7,6 +7,10 @@ package ui.game;
 import java.awt.Color;
 import javax.swing.JButton;
 import game.quince.Quince;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JFrame;
+import ui.menu.Menu;
 
 /**
  *
@@ -17,11 +21,28 @@ public class QuinceUI extends javax.swing.JFrame {
     /**
      * Creates new form Quince
      */
+    private Quince juego;
     
-    public Quince game = new Quince();
     
-    public QuinceUI() {
+    public QuinceUI(Menu menu) {
         initComponents();
+        juego = new Quince(menu);
+        
+        setTitle("Quince");
+        //setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Agregar botón para regresar al menú
+        JButton btnMenu = new JButton("Regresar al Menu");
+        btnMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false); // Ocultar la ventana del juego
+                menu.setVisible(true); // Volver a mostrar el menú
+            }
+        });
+        
+        add(btnMenu);
     }
 
     /**
@@ -189,59 +210,88 @@ public class QuinceUI extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton1);
+         manejarBoton(jButton1, 1);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton2);
+         manejarBoton(jButton2, 2);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton9);
+         manejarBoton(jButton9, 9);
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton3);
+         manejarBoton(jButton3, 3);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton4);
+         manejarBoton(jButton4, 4);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton5);
+         manejarBoton(jButton5, 5);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton6);
+         manejarBoton(jButton6, 6);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton7);
+         manejarBoton(jButton7, 7);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-        disabledButton(jButton8);
+         manejarBoton(jButton8, 8);
     }//GEN-LAST:event_jButton8ActionPerformed
 
+    private void manejarBoton(JButton button, int numero) {
+        disabledButton(button);
+        juego.seleccionarNumeroJugador(numero);
+
+        // Actualizar UI después de cada turno
+        actualizarUI();
+    }
+
+    // Deshabilitar el botón y cambiar el color
     public void disabledButton(JButton button) {
-        int valor = Integer.parseInt(button.getText());
         button.setEnabled(false);
         button.setBackground(Color.RED);
         button.setOpaque(true);
-        game.secuenceGame(valor, obtenerBotonesUI());
     }
 
-    public JButton[] obtenerBotonesUI() {
-        return new JButton[] { jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9 };
+    // Actualizar UI según los números elegidos
+    private void actualizarUI() {
+        for (int numero : juego.getNumerosComputadora()) {
+            JButton boton = obtenerBotonPorNumero(numero);
+            boton.setEnabled(false);
+            boton.setBackground(Color.GREEN);
+            boton.setOpaque(true);
+        }
+    }
+
+    // Método para obtener el botón correspondiente al número
+    private JButton obtenerBotonPorNumero(int numero) {
+        switch (numero) {
+            case 1: return jButton1;
+            case 2: return jButton2;
+            case 3: return jButton3;
+            case 4: return jButton4;
+            case 5: return jButton5;
+            case 6: return jButton6;
+            case 7: return jButton7;
+            case 8: return jButton8;
+            case 9: return jButton9;
+            default: return null;
+        }
     }
     
     /**
@@ -272,12 +322,12 @@ public class QuinceUI extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the form *//*
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new QuinceUI().setVisible(true);
             }
-        });
+        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
